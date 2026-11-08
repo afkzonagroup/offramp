@@ -1,0 +1,51 @@
+name: CI
+
+# Runs on pull requests and on demand only. No push or scheduled runs.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=low
+      # .npmrc sets ignore-scripts=true, so "prepack" does not run: build explicitly
+      # and fail when the tarball would miss the compiled code.
+      - run: npm run build
+      - run: npm pack --dry-run --json > "$RUNNER_TEMP/pack.json"
+      - run: node scripts/check-pack.mjs "$RUNNER_TEMP/pack.json"
+
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Run the action on the example profile
+        id: offramp
+        uses: ./
+        with:
+          profile: examples/provider-profile.json
+          fail-on: conflict
+      - name: Show the outputs
+        env:
+          CONFLICTS: ${{ steps.offramp.outputs.conflicts }}
+          FINDINGS: ${{ steps.offramp.outputs.findings }}
+        run: echo "conflicts=$CONFLICTS findings=$FINDINGS"

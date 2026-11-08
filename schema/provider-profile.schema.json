@@ -1,0 +1,1028 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/afkzonagroup/offramp/raw/main/schema/provider-profile.schema.json",
+  "title": "Offramp provider profile",
+  "description": "What a provider of data processing services states about switching under Chapter VI of Regulation (EU) 2023/2854.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "version",
+    "provider",
+    "timeZone",
+    "services"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "maxLength": 2048
+    },
+    "format": {
+      "const": "offramp/provider-profile"
+    },
+    "version": {
+      "const": 1
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "legalName": {
+          "$ref": "#/$defs/name"
+        },
+        "website": {
+          "$ref": "#/$defs/url"
+        },
+        "contactEmail": {
+          "$ref": "#/$defs/email"
+        },
+        "switchingContact": {
+          "$ref": "#/$defs/shortText"
+        }
+      }
+    },
+    "timeZone": {
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^[A-Za-z][A-Za-z0-9_+\\-/]*$",
+      "description": "IANA time zone, e.g. Europe/Vilnius."
+    },
+    "workingDays": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "publicHolidays": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/date"
+          },
+          "maxItems": 1000
+        },
+        "calendarName": {
+          "$ref": "#/$defs/name"
+        }
+      }
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/service"
+      },
+      "maxItems": 100,
+      "minItems": 1
+    },
+    "contract": {
+      "$ref": "#/$defs/contract"
+    },
+    "information": {
+      "$ref": "#/$defs/information"
+    },
+    "internationalAccess": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "jurisdictions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/name"
+          },
+          "maxItems": 100
+        },
+        "jurisdictionInformationUrl": {
+          "$ref": "#/$defs/url"
+        },
+        "measuresInformationUrl": {
+          "$ref": "#/$defs/url"
+        }
+      }
+    },
+    "charges": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "currency"
+      ],
+      "properties": {
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/charge"
+          },
+          "maxItems": 500
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 200,
+      "allOf": [
+        {
+          "pattern": "\\S"
+        },
+        {
+          "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+        }
+      ]
+    },
+    "shortText": {
+      "type": "string",
+      "maxLength": 500,
+      "allOf": [
+        {
+          "pattern": "\\S"
+        },
+        {
+          "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+        }
+      ]
+    },
+    "longText": {
+      "type": "string",
+      "maxLength": 4000,
+      "allOf": [
+        {
+          "pattern": "\\S"
+        },
+        {
+          "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff]*$"
+        }
+      ]
+    },
+    "url": {
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^https?://[^\\s/?#@]+(?:[/?#]\\S*)?$"
+    },
+    "email": {
+      "type": "string",
+      "maxLength": 254,
+      "pattern": "^[^\\s@<>()[\\]\\\\,;:\"]{1,64}@[A-Za-z0-9](?:[A-Za-z0-9-]{0,62}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,62}[A-Za-z0-9])?)+$"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$",
+      "description": "Calendar date YYYY-MM-DD (the date must exist)."
+    },
+    "amountMinor": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000000000,
+      "description": "Amount in minor units of the currency (e.g. cents)."
+    },
+    "format": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "mediaType": {
+          "type": "string",
+          "maxLength": 127,
+          "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]{0,62}/[a-z0-9][a-z0-9!#$&^_.+-]{0,62}$"
+        },
+        "specificationUrl": {
+          "$ref": "#/$defs/url"
+        },
+        "structured": {
+          "type": "boolean"
+        },
+        "commonlyUsed": {
+          "type": "boolean"
+        },
+        "machineReadable": {
+          "type": "boolean"
+        },
+        "openSpecification": {
+          "type": "boolean"
+        }
+      }
+    },
+    "category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "description": {
+          "$ref": "#/$defs/longText"
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "input",
+            "output",
+            "metadata",
+            "mixed"
+          ]
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/format"
+          },
+          "maxItems": 20
+        }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "application",
+            "configuration",
+            "access-rights",
+            "virtual-machine",
+            "container",
+            "other"
+          ]
+        },
+        "description": {
+          "$ref": "#/$defs/longText"
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/format"
+          },
+          "maxItems": 20
+        }
+      }
+    },
+    "exempted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "reason",
+        "tradeSecretRisk"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "reason": {
+          "$ref": "#/$defs/longText"
+        },
+        "tradeSecretRisk": {
+          "type": "boolean"
+        }
+      }
+    },
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "api",
+            "bulk-export",
+            "console",
+            "other"
+          ]
+        },
+        "documentationUrl": {
+          "$ref": "#/$defs/url"
+        },
+        "freeOfCharge": {
+          "type": "boolean"
+        },
+        "availableToAllCustomers": {
+          "type": "boolean"
+        },
+        "availableToDestinationProviders": {
+          "type": "boolean"
+        }
+      }
+    },
+    "service": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "deliveryModel"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "description": {
+          "$ref": "#/$defs/longText"
+        },
+        "deliveryModel": {
+          "type": "string",
+          "enum": [
+            "iaas",
+            "paas",
+            "saas",
+            "other"
+          ]
+        },
+        "serviceType": {
+          "$ref": "#/$defs/longText"
+        },
+        "regime": {
+          "type": "string",
+          "enum": [
+            "standard",
+            "custom-built",
+            "non-production"
+          ],
+          "default": "standard"
+        },
+        "offeredAtBroadCommercialScale": {
+          "type": "boolean"
+        },
+        "limitedPeriodDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3650
+        },
+        "exportableData": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/category"
+          },
+          "maxItems": 500
+        },
+        "digitalAssets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/asset"
+          },
+          "maxItems": 500
+        },
+        "exemptedData": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/exempted"
+          },
+          "maxItems": 200
+        },
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/interface"
+          },
+          "maxItems": 50
+        },
+        "switchingMethods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shortText"
+          },
+          "maxItems": 100
+        },
+        "knownRestrictions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shortText"
+          },
+          "maxItems": 100
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shortText"
+          },
+          "maxItems": 100
+        },
+        "functionalEquivalence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [],
+          "properties": {
+            "capabilities": {
+              "type": "boolean"
+            },
+            "information": {
+              "type": "boolean"
+            },
+            "documentation": {
+              "type": "boolean"
+            },
+            "technicalSupport": {
+              "type": "boolean"
+            },
+            "tools": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/shortText"
+              },
+              "maxItems": 100
+            }
+          }
+        },
+        "unbundling": {
+          "type": "string",
+          "enum": [
+            "feasible",
+            "not-feasible",
+            "not-applicable"
+          ]
+        },
+        "unbundlingNote": {
+          "$ref": "#/$defs/longText"
+        },
+        "freeTier": {
+          "type": "boolean"
+        },
+        "estimatedSwitchingTime": {
+          "$ref": "#/$defs/shortText"
+        },
+        "complexSwitchingInfo": {
+          "$ref": "#/$defs/longText"
+        }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "writtenContract": {
+          "type": "boolean"
+        },
+        "availableBeforeSigning": {
+          "type": "boolean"
+        },
+        "storableAndReproducible": {
+          "type": "boolean"
+        },
+        "switchingClause": {
+          "type": "boolean"
+        },
+        "reasonableAssistance": {
+          "type": "boolean"
+        },
+        "businessContinuity": {
+          "type": "boolean"
+        },
+        "knownRisksInformation": {
+          "type": "boolean"
+        },
+        "highLevelOfSecurity": {
+          "type": "boolean"
+        },
+        "exitStrategySupport": {
+          "type": "boolean"
+        },
+        "terminationOnSuccessfulSwitch": {
+          "type": "boolean"
+        },
+        "terminationOnEraseAtNoticeEnd": {
+          "type": "boolean"
+        },
+        "terminationNotified": {
+          "type": "boolean"
+        },
+        "erasureGuaranteed": {
+          "type": "boolean"
+        },
+        "chargesClause": {
+          "type": "boolean"
+        },
+        "optionSwitchToProvider": {
+          "type": "boolean"
+        },
+        "optionSwitchToOnPremises": {
+          "type": "boolean"
+        },
+        "optionErase": {
+          "type": "boolean"
+        },
+        "unfeasibilityClause": {
+          "type": "boolean"
+        },
+        "customerExtensionRight": {
+          "type": "boolean"
+        },
+        "internationalAccessWebsitesListed": {
+          "type": "boolean"
+        },
+        "transitionDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3650
+        },
+        "retrievalDays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3650
+        },
+        "unfeasibilityNoticeWorkingDays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 365
+        },
+        "maxAlternativeTransitionMonths": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120
+        },
+        "noticePeriod": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "unit",
+            "value"
+          ],
+          "properties": {
+            "unit": {
+              "type": "string",
+              "enum": [
+                "days",
+                "months"
+              ]
+            },
+            "value": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3650
+            }
+          },
+          "if": {
+            "properties": {
+              "unit": {
+                "const": "months"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "integer",
+                "maximum": 120
+              }
+            }
+          }
+        },
+        "clauseRefs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "writtenContract": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "availableBeforeSigning": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "storableAndReproducible": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "switchingClause": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "reasonableAssistance": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "businessContinuity": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "knownRisksInformation": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "highLevelOfSecurity": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "exitStrategySupport": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "terminationOnSuccessfulSwitch": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "terminationOnEraseAtNoticeEnd": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "terminationNotified": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "erasureGuaranteed": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "chargesClause": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "optionSwitchToProvider": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "optionSwitchToOnPremises": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "optionErase": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "unfeasibilityClause": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "customerExtensionRight": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "internationalAccessWebsitesListed": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "transitionDays": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "retrievalDays": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "unfeasibilityNoticeWorkingDays": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "maxAlternativeTransitionMonths": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            },
+            "noticePeriod": {
+              "type": "string",
+              "maxLength": 40,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "information": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "switchingProcedures": {
+          "$ref": "#/$defs/longText"
+        },
+        "onlineRegisterUrl": {
+          "$ref": "#/$defs/url"
+        },
+        "chargesInformationUrl": {
+          "$ref": "#/$defs/url"
+        },
+        "registerCoversDataStructures": {
+          "type": "boolean"
+        },
+        "registerCoversDataFormats": {
+          "type": "boolean"
+        },
+        "registerCoversStandards": {
+          "type": "boolean"
+        },
+        "registerCoversOpenInteroperabilitySpecifications": {
+          "type": "boolean"
+        },
+        "preContractStandardServiceFees": {
+          "type": "boolean"
+        },
+        "preContractEarlyTerminationPenalties": {
+          "type": "boolean"
+        },
+        "preContractReducedSwitchingCharges": {
+          "type": "boolean"
+        },
+        "exemptionsInformedBeforeContract": {
+          "type": "boolean"
+        }
+      }
+    },
+    "charge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "amountMinor"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "switching",
+            "data-egress",
+            "standard-service-fee",
+            "early-termination-penalty",
+            "additional-service",
+            "parallel-use-egress"
+          ]
+        },
+        "amountMinor": {
+          "$ref": "#/$defs/amountMinor"
+        },
+        "unit": {
+          "$ref": "#/$defs/name"
+        },
+        "directlyLinkedCostMinor": {
+          "$ref": "#/$defs/amountMinor"
+        },
+        "costBasis": {
+          "$ref": "#/$defs/longText"
+        },
+        "appliesFrom": {
+          "$ref": "#/$defs/date"
+        },
+        "appliesUntil": {
+          "$ref": "#/$defs/date"
+        },
+        "serviceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "maxItems": 100
+        },
+        "onlyOnCustomerRequest": {
+          "type": "boolean"
+        },
+        "priceAgreedInAdvance": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

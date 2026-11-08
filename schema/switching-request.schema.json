@@ -1,0 +1,432 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/afkzonagroup/offramp/raw/main/schema/switching-request.schema.json",
+  "title": "Offramp switching request",
+  "description": "A switching request under Article 25(3) of Regulation (EU) 2023/2854 and the events that followed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "version",
+    "id",
+    "provider",
+    "customer",
+    "serviceIds",
+    "target",
+    "data",
+    "receivedAt"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "maxLength": 2048
+    },
+    "format": {
+      "const": "offramp/switching-request"
+    },
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/id"
+    },
+    "provider": {
+      "$ref": "#/$defs/name"
+    },
+    "profileDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "customer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "reference": {
+          "$ref": "#/$defs/name"
+        },
+        "contactEmail": {
+          "$ref": "#/$defs/email"
+        }
+      }
+    },
+    "serviceIds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id"
+      },
+      "maxItems": 100,
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "target": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "providerName"
+          ],
+          "properties": {
+            "kind": {
+              "const": "provider"
+            },
+            "providerName": {
+              "$ref": "#/$defs/name"
+            },
+            "details": {
+              "$ref": "#/$defs/longText"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "on-premises"
+            },
+            "details": {
+              "$ref": "#/$defs/longText"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "erase"
+            }
+          }
+        }
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "categoryIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "maxItems": 1000,
+          "uniqueItems": true
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "maxItems": 1000,
+          "uniqueItems": true
+        }
+      }
+    },
+    "receivedAt": {
+      "$ref": "#/$defs/instant"
+    },
+    "transitionStartDate": {
+      "$ref": "#/$defs/date"
+    },
+    "retrievalDays": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3650
+    },
+    "erasureNotBefore": {
+      "$ref": "#/$defs/date"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/event"
+      },
+      "maxItems": 100
+    },
+    "charges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/appliedCharge"
+      },
+      "maxItems": 200
+    },
+    "notes": {
+      "$ref": "#/$defs/longText"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 200,
+      "allOf": [
+        {
+          "pattern": "\\S"
+        },
+        {
+          "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+        }
+      ]
+    },
+    "shortText": {
+      "type": "string",
+      "maxLength": 500,
+      "allOf": [
+        {
+          "pattern": "\\S"
+        },
+        {
+          "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff\\n\\t]*$"
+        }
+      ]
+    },
+    "longText": {
+      "type": "string",
+      "maxLength": 4000,
+      "allOf": [
+        {
+          "pattern": "\\S"
+        },
+        {
+          "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff]*$"
+        }
+      ]
+    },
+    "url": {
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^https?://[^\\s/?#@]+(?:[/?#]\\S*)?$"
+    },
+    "email": {
+      "type": "string",
+      "maxLength": 254,
+      "pattern": "^[^\\s@<>()[\\]\\\\,;:\"]{1,64}@[A-Za-z0-9](?:[A-Za-z0-9-]{0,62}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,62}[A-Za-z0-9])?)+$"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$",
+      "description": "Calendar date YYYY-MM-DD (the date must exist)."
+    },
+    "amountMinor": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000000000,
+      "description": "Amount in minor units of the currency (e.g. cents)."
+    },
+    "instant": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+      "description": "UTC timestamp as produced by Date.prototype.toISOString()."
+    },
+    "event": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "at",
+            "reasons",
+            "alternativeTransitionEnd"
+          ],
+          "properties": {
+            "type": {
+              "const": "unfeasibility-notified"
+            },
+            "at": {
+              "$ref": "#/$defs/instant"
+            },
+            "note": {
+              "$ref": "#/$defs/longText"
+            },
+            "reasons": {
+              "type": "string",
+              "maxLength": 4000,
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                },
+                {
+                  "pattern": "^[^\\u0000-\\u0008\\u000b-\\u001f\\u007f-\\u009f\\u061c\\u200b-\\u200f\\u2028-\\u202e\\u2060-\\u2069\\ufeff]*$"
+                }
+              ]
+            },
+            "alternativeTransitionEnd": {
+              "$ref": "#/$defs/date"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "at",
+            "newTransitionEnd"
+          ],
+          "properties": {
+            "type": {
+              "const": "customer-extension"
+            },
+            "at": {
+              "$ref": "#/$defs/instant"
+            },
+            "note": {
+              "$ref": "#/$defs/longText"
+            },
+            "newTransitionEnd": {
+              "$ref": "#/$defs/date"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "at"
+          ],
+          "properties": {
+            "type": {
+              "const": "transition-started"
+            },
+            "at": {
+              "$ref": "#/$defs/instant"
+            },
+            "note": {
+              "$ref": "#/$defs/longText"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "at"
+          ],
+          "properties": {
+            "type": {
+              "const": "switching-completed"
+            },
+            "at": {
+              "$ref": "#/$defs/instant"
+            },
+            "note": {
+              "$ref": "#/$defs/longText"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "at"
+          ],
+          "properties": {
+            "type": {
+              "const": "erasure-confirmed"
+            },
+            "at": {
+              "$ref": "#/$defs/instant"
+            },
+            "note": {
+              "$ref": "#/$defs/longText"
+            },
+            "scope": {
+              "$ref": "#/$defs/longText"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "at"
+          ],
+          "properties": {
+            "type": {
+              "const": "cancelled"
+            },
+            "at": {
+              "$ref": "#/$defs/instant"
+            },
+            "note": {
+              "$ref": "#/$defs/longText"
+            },
+            "reason": {
+              "$ref": "#/$defs/longText"
+            }
+          }
+        }
+      ]
+    },
+    "appliedCharge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "amountMinor",
+        "imposedOn"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "chargeId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "switching",
+            "data-egress",
+            "standard-service-fee",
+            "early-termination-penalty",
+            "additional-service",
+            "parallel-use-egress"
+          ]
+        },
+        "description": {
+          "$ref": "#/$defs/longText"
+        },
+        "amountMinor": {
+          "$ref": "#/$defs/amountMinor"
+        },
+        "directlyLinkedCostMinor": {
+          "$ref": "#/$defs/amountMinor"
+        },
+        "imposedOn": {
+          "$ref": "#/$defs/date"
+        },
+        "customerRequested": {
+          "type": "boolean"
+        },
+        "priceAgreedInAdvance": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

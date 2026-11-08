@@ -1,0 +1,10 @@
+node_modules/
+dist/
+dist-typecheck/
+coverage/
+*.tsbuildinfo
+.DS_Store
+/out/
+/tmp/
+test/.tmp/
+test/.readme-tmp/
