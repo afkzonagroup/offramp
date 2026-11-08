@@ -52,11 +52,6 @@ Everything runs offline. Nothing is sent anywhere.
 
 ## Quick start
 
-> **Before the first npm release:** build from source. Clone
-> https://github.com/afkzonagroup/offramp, run `npm ci && npm run build && npm pack`,
-> and install the resulting `.tgz` file wherever the steps below install
-> `@afkzona/offramp`.
-
 Requires Node.js 22 or later.
 
 ```sh
